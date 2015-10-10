@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,32 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\task;
+namespace UAF\event;
 
-use pocketmine\scheduler\PluginTask;
-use SimpleAuth\SimpleAuth;
+use pocketmine\event\Cancellable;
+use pocketmine\Player;
+use UAF\UAF;
 
-class MySQLPingTask extends PluginTask{
+class PlayerDeauthenticateEvent extends SimpleAuthEvent implements Cancellable{
+	public static $handlerList = null;
 
-	/** @var \mysqli */
-	private $database;
 
-	public function __construct(SimpleAuth $owner, \mysqli $database){
-		parent::__construct($owner);
-		$this->database = $database;
+	/** @var Player */
+	private $player;
+
+	/**
+	 * @param UAF $plugin
+	 * @param Player     $player
+	 */
+	public function __construct(UAF $plugin, Player $player){
+		$this->player = $player;
+		parent::__construct($plugin);
 	}
 
-	public function onRun($currentTick){
-		$this->database->ping();
+	/**
+	 * @return Player
+	 */
+	public function getPlayer(){
+		return $this->player;
 	}
 }

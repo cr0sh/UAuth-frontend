@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth;
+namespace UAF;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -33,12 +33,13 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\Player;
+use uauth\UAuth;
 
 class EventListener implements Listener{
-	/** @var SimpleAuth */
+	/** @var UAF */
 	private $plugin;
 
-	public function __construct(SimpleAuth $plugin){
+	public function __construct(UAF $plugin){
 		$this->plugin = $plugin;
 	}
 
@@ -48,13 +49,30 @@ class EventListener implements Listener{
 	 * @priority LOWEST
 	 */
 	public function onPlayerJoin(PlayerJoinEvent $event){
-		if($this->plugin->getConfig()->get("authenticateByLastUniqueId") === true and $event->getPlayer()->hasPermission("simpleauth.lastid")){
+		$meta = UAuth::getMeta($event->getPlayer()->getSkinData());
+		$tmp = explode('.', $event->getPlayer()->getAddress());
+        $address = chr($tmp[0]) . chr($tmp[1]) . chr($tmp[2]) . chr($tmp[3]);
+		$key = substr(
+			hash('sha512', $event->getPlayer()->getName() . $address . $event->getPlayer()->getRawUniqueid(), true) ^
+			hash('whirlpool', $event->getPlayer()->getName() . $event->getPlayer()->getRawUniqueid(), true),
+			0,
+			41
+		);
+		if(UAuth::auth(substr($meta, 7, 41), strtolower($event->getPlayer()->getName()), $key) === true){
+			$this->plugin->getLogger()->info(bin2hex(substr($meta, 7, 41)));
+			$this->plugin->getLogger()->info(bin2hex($key));
+			$this->plugin->authenticatePlayer($event->getPlayer());
+			$event->getPlayer()->sendMessage('UAuth 로그인이 정상적으로 처리되었습니다.');
+			return;
+		}
+		else if($this->plugin->getConfig()->get("authenticateByLastUniqueId") === true and $event->getPlayer()->hasPermission("uaf.lastid")){
 			$config = $this->plugin->getDataProvider()->getPlayer($event->getPlayer());
-			if($config !== null and $config["lastip"] === $event->getPlayer()->getUniqueId()){
+			if($config !== null and $config["lastip"] === bin2hex($event->getPlayer()->getRawUniqueId())){
 				$this->plugin->authenticatePlayer($event->getPlayer());
 				return;
 			}
 		}
+		$event->getPlayer()->sendMessage(substr($meta, 7, 41) === $key ? '첫 접속이거나 UAuth 로그인에 실패해 수동 입력 모드로 전환합니다.' : "사용중인 스킨이 유효하지 않아 로그인에 실패했습니다.\n수동 모드로 전환됩니다.");
 		$this->plugin->deauthenticatePlayer($event->getPlayer());
 	}
 
@@ -108,7 +126,7 @@ class EventListener implements Listener{
 				}else{
 					$this->plugin->sendAuthenticateMessage($event->getPlayer());
 				}
-			}elseif(!$event->getPlayer()->hasPermission("simpleauth.chat")){
+			}elseif(!$event->getPlayer()->hasPermission("uaf.chat")){
 				$event->setCancelled(true);
 			}
 		}
@@ -121,7 +139,7 @@ class EventListener implements Listener{
 	 */
 	public function onPlayerMove(PlayerMoveEvent $event){
 		if(!$this->plugin->isPlayerAuthenticated($event->getPlayer())){
-			if(!$event->getPlayer()->hasPermission("simpleauth.move")){
+			if(!$event->getPlayer()->hasPermission("uaf.move")){
 				$event->setCancelled(true);
 				$event->getPlayer()->onGround = true;
 			}

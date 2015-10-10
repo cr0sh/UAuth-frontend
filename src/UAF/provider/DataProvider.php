@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\provider;
+namespace UAF\provider;
 
 use pocketmine\IPlayer;
 use pocketmine\utils\Config;
-use SimpleAuth\SimpleAuth;
+use UAF\UAF;
 
 interface DataProvider{
 

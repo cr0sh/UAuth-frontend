@@ -1,4 +1,4 @@
-# Default config for SimpleAuth plugin
+# Default config for UAF plugin
 
 #Sets the data provider (yaml, sqlite3, mysql, none).
 #Only use none when there is another plugin that will integrate its dataProvider with SimpleAuth

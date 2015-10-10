@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\task;
+namespace UAF\task;
 
 use pocketmine\Player;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\utils\TextFormat;
-use SimpleAuth\SimpleAuth;
+use UAF\UAF;
 
 class ShowMessageTask extends PluginTask{
 
 	/** @var Player[] */
 	private $playerList = [];
 
-	public function __construct(SimpleAuth $plugin){
+	public function __construct(UAF $plugin){
 		parent::__construct($plugin);
 	}
 
@@ -39,11 +39,11 @@ class ShowMessageTask extends PluginTask{
 	}
 
 	public function addPlayer(Player $player){
-		$this->playerList[$player->getUniqueId()] = $player;
+		$this->playerList[bin2hex($player->getRawUniqueId())] = $player;
 	}
 
 	public function removePlayer(Player $player){
-		unset($this->playerList[$player->getUniqueId()]);
+		unset($this->playerList[bin2hex($player->getRawUniqueId())]);
 	}
 
 	public function onRun($currentTick){

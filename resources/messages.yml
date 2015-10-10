@@ -1,27 +1,27 @@
-# SimpleAuth 1.4.0 language file
+# UAF 1.4.0 language file
 
 join:
- message1: "This server requires account registration."
- message2: "You must authenticate to play."
- register: "Please register using: /register <password>"
- login: "Please log in using: /login <password>"
- popup: "You are not logged in"
+ message1: "비밀번호를 설정해야 합니다."
+ message2: "비밀번호를 설정하지 않으면 플레이할 수 없습니다.."
+ register: "다음 명령어로 비밀번호 설정: /register <password>"
+ login: "다음 명령어로 로그인: /login <password>"
+ popup: "비밀번호를 입력하지 않았습니다."
 
 register:
  usage: "/register <password>"
- description: "Registers an account"
- permission: "You do not have permission to use the register command!"
+ description: "비밀번호 설정"
+ permission: "비밀번호 설정에 필요한 권한이 없습니다."
  error:
-  password: "Your password is too short!"
-  registered: "This account is already registered."
-  general: "Error during authentication."
+  password: "너무 짧습니다."
+  registered: "이미 이 계정으로 비밀번호가 설정되어 있습니다."
+  general: "비밀번호 설정 중 오류가 발생했습니다.."
 
 login:
  usage: "/login <password>"
- description: "Logs into an account"
- permission: "You do not have permission to use the login command!"
- success: "You have been authenticated."
+ description: "설정한 비밀번호로 로그인합니다."
+ permission: "로그인에 필요한 권한이 없습니다."
+ success: "로그인이 완료되었습니다."
  error:
-  password: "Incorrect password!"
-  registered: "This account is not registered."
-  block: "Too many tries!"
+  password: "잘못된 비밀번호입니다!"
+  registered: "비밀번호가 설정되지 않았습니다."
+  block: "너무 많이 시도했습니다."

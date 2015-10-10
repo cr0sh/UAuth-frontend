@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,22 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\provider;
+namespace UAF\provider;
 
 use pocketmine\IPlayer;
-use SimpleAuth\SimpleAuth;
-use SimpleAuth\task\MySQLPingTask;
+use UAF\UAF;
+use UAF\task\MySQLPingTask;
 
 class MySQLDataProvider implements DataProvider{
 
-	/** @var SimpleAuth */
+	/** @var UAF */
 	protected $plugin;
 
 	/** @var \mysqli */
 	protected $database;
 
 
-	public function __construct(SimpleAuth $plugin){
+	public function __construct(UAF $plugin){
 		$this->plugin = $plugin;
 		$config = $this->plugin->getConfig()->get("dataProviderSettings");
 

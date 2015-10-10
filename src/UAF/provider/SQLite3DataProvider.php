@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\provider;
+namespace UAF\provider;
 
 use pocketmine\IPlayer;
-use SimpleAuth\SimpleAuth;
+use UAF\UAF;
 
 class SQLite3DataProvider implements DataProvider{
 
-	/** @var SimpleAuth */
+	/** @var UAF */
 	protected $plugin;
 
 	/** @var \SQLite3 */
 	protected $database;
 
 
-	public function __construct(SimpleAuth $plugin){
+	public function __construct(UAF $plugin){
 		$this->plugin = $plugin;
 		if(!file_exists($this->plugin->getDataFolder() . "players.db")){
 			$this->database = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);

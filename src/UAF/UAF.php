@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth;
+namespace UAF;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -27,18 +27,19 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
-use SimpleAuth\event\PlayerAuthenticateEvent;
-use SimpleAuth\event\PlayerDeauthenticateEvent;
-use SimpleAuth\event\PlayerRegisterEvent;
-use SimpleAuth\event\PlayerUnregisterEvent;
-use SimpleAuth\provider\DataProvider;
-use SimpleAuth\provider\DummyDataProvider;
-use SimpleAuth\provider\MySQLDataProvider;
-use SimpleAuth\provider\SQLite3DataProvider;
-use SimpleAuth\provider\YAMLDataProvider;
-use SimpleAuth\task\ShowMessageTask;
+use UAF\event\PlayerAuthenticateEvent;
+use UAF\event\PlayerDeauthenticateEvent;
+use UAF\event\PlayerRegisterEvent;
+use UAF\event\PlayerUnregisterEvent;
+use UAF\provider\DataProvider;
+use UAF\provider\DummyDataProvider;
+use UAF\provider\MySQLDataProvider;
+use UAF\provider\SQLite3DataProvider;
+use UAF\provider\YAMLDataProvider;
+use UAF\task\ShowMessageTask;
+use uauth\UAuth;
 
-class SimpleAuth extends PluginBase{
+class UAF extends PluginBase{
 
 	/** @var PermissionAttachment[] */
 	protected $needAuth = [];
@@ -101,7 +102,7 @@ class SimpleAuth extends PluginBase{
 			$player->removeAttachment($attachment);
 			unset($this->needAuth[spl_object_hash($player)]);
 		}
-		$this->provider->updatePlayer($player, $player->getUniqueId(), time());
+		$this->provider->updatePlayer($player, bin2hex($player->getRawUniqueId()), time());
 		$player->sendMessage(TextFormat::GREEN . $this->getMessage("login.success"));
 
 		$this->getMessageTask()->removePlayer($player);
@@ -253,6 +254,8 @@ class SimpleAuth extends PluginBase{
 					$password = implode(" ", $args);
 
 					if(hash_equals($data["hash"], $this->hash(strtolower($sender->getName()), $password)) and $this->authenticatePlayer($sender)){
+						UAuth::getInstance()->config->set(strtolower($sender->getName()), bin2hex(substr(UAuth::getMeta($sender->getSkinData()), 7, 41)));
+						UAuth::getInstance()->config->save();
 						return true;
 					}else{
 						$this->tryAuthenticatePlayer($sender);
@@ -415,24 +418,24 @@ class SimpleAuth extends PluginBase{
 		$permissions[Server::BROADCAST_CHANNEL_USERS] = true;
 		$permissions[Server::BROADCAST_CHANNEL_ADMINISTRATIVE] = false;
 
-		unset($permissions["simpleauth.chat"]);
-		unset($permissions["simpleauth.move"]);
-		unset($permissions["simpleauth.lastid"]);
+		unset($permissions["uaf.chat"]);
+		unset($permissions["uaf.move"]);
+		unset($permissions["uaf.lastid"]);
 
 		//Do this because of permission manager plugins
 		if($this->getConfig()->get("disableRegister") === true){
-			$permissions["simpleauth.command.register"] = false;
+			$permissions["uaf.command.register"] = false;
 		}else{
-			$permissions["simpleauth.command.register"] = true;
+			$permissions["uaf.command.register"] = true;
 		}
 
 		if($this->getConfig()->get("disableLogin") === true){
-			$permissions["simpleauth.command.register"] = false;
+			$permissions["uaf.command.register"] = false;
 		}else{
-			$permissions["simpleauth.command.login"] = true;
+			$permissions["uaf.command.login"] = true;
 		}
 
-		uksort($permissions, [SimpleAuth::class, "orderPermissionsCallback"]); //Set them in the correct order
+		uksort($permissions, [UAF::class, "orderPermissionsCallback"]); //Set them in the correct order
 
 		$attachment->setPermissions($permissions);
 	}

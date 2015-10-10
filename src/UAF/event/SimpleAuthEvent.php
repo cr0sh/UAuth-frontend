@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SimpleAuth plugin for PocketMine-MP
+ * UAF plugin for PocketMine-MP
  * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/SimpleAuth>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,31 +15,17 @@
  * GNU General Public License for more details.
 */
 
-namespace SimpleAuth\event;
+namespace UAF\event;
 
-use pocketmine\event\Cancellable;
-use pocketmine\IPlayer;
-use SimpleAuth\SimpleAuth;
+use pocketmine\event\plugin\PluginEvent;
+use UAF\UAF;
 
-class PlayerRegisterEvent extends SimpleAuthEvent implements Cancellable{
-	public static $handlerList = null;
-
-	/** @var IPlayer */
-	private $player;
+abstract class SimpleAuthEvent extends PluginEvent{
 
 	/**
-	 * @param SimpleAuth $plugin
-	 * @param IPlayer    $player
+	 * @param UAF $plugin
 	 */
-	public function __construct(SimpleAuth $plugin, IPlayer $player){
-		$this->player = $player;
+	public function __construct(UAF $plugin){
 		parent::__construct($plugin);
-	}
-
-	/**
-	 * @return IPlayer
-	 */
-	public function getPlayer(){
-		return $this->player;
 	}
 }

@@ -1,43 +1,44 @@
-name: SimpleAuth
-main: SimpleAuth\SimpleAuth
-version: 1.7.1
-api: 1.12.0
+name: UAuth-frontend
+main: UAF\UAF
+version: 1.0.0
+api: 1.13.0
 load: STARTUP
-author: PocketMine Team
-authors: [shoghicp]
-description: Prevents people to impersonate an account, requering registration and login when connecting.
-website: https://github.com/PocketMine/SimpleAuth
+author: [PocketMine Team, cr0sh]
+authors: [shoghicp, cr0sh]
+description: Fork of SimpleAuth, using UAuth API for skin metadata authentication
+website: https://tinyw.in/uauth
+depend: UAuth
 commands:
  login:
-  description: "Logs into an account"
+  description: "비밀번호를 이용해 로그인합니다."
   usage: "/login <password>"
-  permission: simpleauth.command.login
+  permission: uaf.command.login
  register:
   description: "Registers an account"
   usage: "/register <password>"
-  permission: simpleauth.command.register
+  permission: uaf.command.register
 
 permissions:
- simpleauth:
+ uaf:
   default: op
-  description: "Allows using everything SimpleAuth has"
+  description: "UAF의 모든 권한 허용"
   children:
-   simpleauth.chat:
-    description: "Allows using the chat while not being authenticated"
+   uaf.chat:
+    description: "로그인되어 있지 않아도 채팅 허용"
     default: false
-   simpleauth.move:
-    description: "Allows moving while not being authenticated"
+   uaf.move:
+    description: "로그인되어 있지 않아도 움직일 수 있음"
     default: false
-   simpleauth.lastid:
-    description: "Allows authenticating using the last id when enabled in the config"
+   uaf.lastid:
+    description: "설정에서 최근 ID로 로그인하는 기능이 활성화되어 있으면 사용"
     default: true
-   simpleauth.command:
-    description: "Allows using SimpleAuth commands"
+   uaf.command:
+    description: "UAF 명령어 사용"
     default: true
     children:
-     simpleauth.command.register:
-      description: "Allows registering an account"
+     uaf.command.register:
+      description: "UAF 비밀번호 생성"
       default: true
-     simpleauth.command.login:
-      description: "Allows logging into an account"
+     uaf.command.login:
+      description: "UAF 로그인"
       default: true
